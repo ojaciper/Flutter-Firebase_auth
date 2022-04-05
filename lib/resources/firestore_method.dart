@@ -32,4 +32,10 @@ class FirestoreMethods {
     }
     return res;
   }
+
+  Future<void> likePost(String postId, String uid, List likes) async {
+    try {} catch (e) {
+      print(e.toString());
+    }
+  }
 }
