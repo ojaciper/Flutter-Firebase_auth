@@ -33,6 +33,7 @@ class FirestoreMethods {
     return res;
   }
 
+  // liking of post
   Future<void> likePost(String postId, String uid, List likes) async {
     try {
       if (likes.contains(uid)) {
@@ -49,6 +50,7 @@ class FirestoreMethods {
     }
   }
 
+// posting of comment
   Future<void> postComment(String postId, String text, String uid, String name,
       String profilePic) async {
     try {
@@ -69,6 +71,15 @@ class FirestoreMethods {
       } else {
         print('Text is empty');
       }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  //deleting post
+  Future<void> deletePost(String postId) async {
+    try {
+      await _firestore.collection("posts").doc(postId).delete();
     } catch (e) {
       print(e.toString());
     }

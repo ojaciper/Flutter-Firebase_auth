@@ -1,9 +1,13 @@
+import 'dart:ffi';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_flutter_clone/models/user_model.dart';
 import 'package:instagram_flutter_clone/providers/user_provider.dart';
 import 'package:instagram_flutter_clone/resources/firestore_method.dart';
 import 'package:instagram_flutter_clone/screens/comments_screen.dart';
 import 'package:instagram_flutter_clone/utils/colors.dart';
+import 'package:instagram_flutter_clone/utils/utils.dart';
 import 'package:instagram_flutter_clone/widgets/like_animation.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +23,27 @@ class PostCard extends StatefulWidget {
 
 class _PostCardState extends State<PostCard> {
   bool isLikeAnimating = false;
+  int commentLen = 0;
+  @override
+  void initState() {
+    super.initState();
+    getComment();
+  }
+
+  void getComment() async {
+    try {
+      QuerySnapshot snap = await FirebaseFirestore.instance
+          .collection("posts")
+          .doc(widget.snap['postId'])
+          .collection("comments")
+          .get();
+      commentLen = snap.docs.length;
+    } catch (e) {
+      showSnackBar(e.toString(), context);
+    }
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     User user = Provider.of<UserProvider>(context).getUser;
@@ -55,26 +80,28 @@ class _PostCardState extends State<PostCard> {
                 IconButton(
                     onPressed: () {
                       showDialog(
-                          context: context,
-                          builder: (context) => Dialog(
-                                child: ListView(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 16),
-                                  shrinkWrap: true,
-                                  children: ["Delete"]
-                                      .map((e) => InkWell(
-                                            onTap: () {},
-                                            child: Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 12,
-                                                      horizontal: 16),
-                                              child: Text(e),
-                                            ),
-                                          ))
-                                      .toList(),
-                                ),
-                              ));
+                        context: context,
+                        builder: (context) => Dialog(
+                          child: ListView(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shrinkWrap: true,
+                            children: ["Delete"]
+                                .map((e) => InkWell(
+                                      onTap: () async {
+                                        FirestoreMethods()
+                                            .deletePost(widget.snap['postId']);
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 12, horizontal: 16),
+                                        child: Text(e),
+                                      ),
+                                    ))
+                                .toList(),
+                          ),
+                        ),
+                      );
                     },
                     icon: const Icon(Icons.more_vert)),
               ],
@@ -213,9 +240,9 @@ class _PostCardState extends State<PostCard> {
                   onTap: () {},
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 6),
-                    child: const Text(
-                      "View all 200 comments",
-                      style: TextStyle(
+                    child: Text(
+                      "View all $commentLen comments",
+                      style: const TextStyle(
                         fontSize: 16,
                         color: secondaryColor,
                       ),
