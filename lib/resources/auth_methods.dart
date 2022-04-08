@@ -67,8 +67,10 @@ class AuthMethods {
 
   // Logging  in the  User
 
-  Future<String> loginUser(
-      {required String email, required String password}) async {
+  Future<String> loginUser({
+    required String email,
+    required String password,
+  }) async {
     String res = "Some error occured";
     try {
       if (email.isNotEmpty || password.isNotEmpty) {
@@ -82,5 +84,10 @@ class AuthMethods {
       res = err.toString();
     }
     return res;
+  }
+
+// signing out user
+  Future<void> signOut() async {
+    _auth.signOut();
   }
 }
