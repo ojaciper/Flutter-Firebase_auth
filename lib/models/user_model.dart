@@ -29,6 +29,7 @@ class User {
         "followers": followers,
         "following": following
       };
+
 // receiving data from firebase
   static User fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;

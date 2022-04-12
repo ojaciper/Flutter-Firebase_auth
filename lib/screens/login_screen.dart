@@ -38,7 +38,9 @@ class _LoginScreenState extends State<LoginScreen> {
       password: _passwordController.text,
     );
 
-    if (res == "success") {
+    if (res != "success") {
+      showSnackBar(res, context);
+    } else {
       // login user
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
@@ -48,9 +50,6 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       );
-    } else {
-      // showing snackbar
-      showSnackBar(res, context);
     }
     setState(() {
       _isLoading = false;
@@ -69,7 +68,8 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Container(
       padding: MediaQuery.of(context).size.width > webScreenSize
           ? EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width / 3)
+              horizontal: MediaQuery.of(context).size.width / 3,
+            )
           : const EdgeInsets.symmetric(horizontal: 32),
       width: double.infinity,
       child: Column(

@@ -32,6 +32,7 @@ class Post {
         "profImage": profImage,
         "likes": likes
       };
+
 // receiving data from firebase
   static Post fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
