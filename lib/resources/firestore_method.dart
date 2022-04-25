@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:instagram_flutter_clone/models/comment.dart';
 import 'package:instagram_flutter_clone/models/post.dart';
 import 'package:instagram_flutter_clone/resources/storage_method.dart';
 import 'package:uuid/uuid.dart';
@@ -54,21 +55,32 @@ class FirestoreMethods {
 // posting of comment
   Future<void> postComment(String postId, String text, String uid, String name,
       String profilePic) async {
+    String commentId = const Uuid().v1();
     try {
+      Comment comment = Comment(
+        profilePic: profilePic,
+        name: name,
+        uid: uid,
+        commentId: commentId,
+        datePublished: DateTime.now(),
+      );
+
       if (text.isNotEmpty) {
-        String commentId = const Uuid().v1();
+        // String commentId = const Uuid().v1();
         await _firestore
             .collection("posts")
             .doc(postId)
             .collection("comment")
             .doc(commentId)
-            .set({
-          'profilePic': profilePic,
-          'name': name,
-          'uid': uid,
-          'commentId': commentId,
-          'datePublished': DateTime.now()
-        });
+            .set(comment.toJson());
+
+        //     {
+        //   'profilePic': profilePic,
+        //   'name': name,
+        //   'uid': uid,
+        //   'commentId': commentId,
+        //   'datePublished': DateTime.now()
+        // }
       } else {
         print('Text is empty');
       }
